@@ -1,0 +1,74 @@
+//basit banka uygulaması
+import 'dart:io';
+
+void main() {
+  Map<String, dynamic> customers = {
+    "hasan": {"password": 1234, "money": 200},
+    "faruk": {"password": 4321, "money": 100},
+  };
+
+  int remainingAttempts = 3;
+  bool loggedIn = false;
+  String? username;
+  String? username0;
+
+  while (!loggedIn && remainingAttempts > 0) {
+    print("Kullanıcı adınızı girin:");
+    username0 = stdin.readLineSync();
+    username = username0?.toLowerCase();
+    if (customers.containsKey(username)) {
+      print("Şifrenizi girin:");
+      int? enteredPassword = int.tryParse(stdin.readLineSync()!);
+      if (enteredPassword == customers[username]["password"]) {
+        print("Giriş başarılı.");
+        loggedIn = true;
+      } else {
+        print("Şifre yanlış.");
+        remainingAttempts--;
+        if (remainingAttempts > 0) {
+          print("Kalan giriş hakkınız: $remainingAttempts");
+        }
+      }
+    } else {
+      print("Kullanıcı adı yanlış.");
+      remainingAttempts--;
+      if (remainingAttempts > 0) {
+        print("Kalan giriş hakkınız: $remainingAttempts");
+      }
+    }
+  }
+
+  if (loggedIn) {
+    print("Hoş geldiniz, $username.");
+    print("Bakiyeniz: ${customers[username]["money"]}");
+
+    print("Para yatırmak için 1, para çekmek için 2, çıkmak için 3 girin:");
+    String? choice = stdin.readLineSync();
+    switch (choice) {
+      case "1":
+        print("Yatırmak istediğiniz miktarı girin:");
+        int? depositAmount = int.tryParse(stdin.readLineSync()!);
+        customers[username]["money"] += depositAmount!;
+        print("Yeni bakiyeniz: ${customers[username]["money"]}");
+        break;
+      case "2":
+        print("Çekmek istediğiniz miktarı girin:");
+        int? withdrawAmount = int.tryParse(stdin.readLineSync()!);
+        if (withdrawAmount! > customers[username]["money"]) {
+          print("Bakiyeniz yetersiz.");
+        } else {
+          customers[username]["money"] -= withdrawAmount;
+          print("Yeni bakiyeniz: ${customers[username]["money"]}");
+        }
+        break;
+      case "3":
+        print("Çıkış yapılıyor.");
+        break;
+      default:
+        print("Geçersiz seçim.");
+        break;
+    }
+  } else {
+    print("Giriş hakkınız kalmadı.");
+  }
+}
